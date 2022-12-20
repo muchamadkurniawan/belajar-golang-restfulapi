@@ -6,12 +6,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
 type CategoryRepositoryImpl struct {
 }
 
-func NewCategoryRepository() *CategoryRepositoryImpl {
+func NewCategoryRepository() CategoryRepository {
 	return &CategoryRepositoryImpl{}
 }
 
@@ -58,9 +59,11 @@ func (repository *CategoryRepositoryImpl) FindById(ctx context.Context, tx *sql.
 }
 
 func (repository *CategoryRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Category {
+	fmt.Println("ini repository ")
 	sql := "select id, name from category"
 	rows, err := tx.QueryContext(ctx, sql)
 	helper.PanicifError(err)
+	defer rows.Close()
 
 	var categories []domain.Category
 	for rows.Next() {

@@ -7,6 +7,7 @@ import (
 	"belajar-golang-restfulapi/repository"
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -24,7 +25,7 @@ func NewCategoryService(categoryRepository repository.CategoryRepository, DB *sq
 	}
 }
 
-func (service CategoryServiceImpl) Save(ctx context.Context, request web.CategoryCreateRequest) web.CategoryResponse {
+func (service *CategoryServiceImpl) Save(ctx context.Context, request web.CategoryCreateRequest) web.CategoryResponse {
 	err := service.Validate.Struct(request)
 	helper.PanicifError(err)
 
@@ -42,7 +43,7 @@ func (service CategoryServiceImpl) Save(ctx context.Context, request web.Categor
 
 }
 
-func (service CategoryServiceImpl) Update(ctx context.Context, request web.CategoryUpdateRequest) web.CategoryResponse {
+func (service *CategoryServiceImpl) Update(ctx context.Context, request web.CategoryUpdateRequest) web.CategoryResponse {
 	err := service.Validate.Struct(request)
 	helper.PanicifError(err)
 
@@ -58,7 +59,7 @@ func (service CategoryServiceImpl) Update(ctx context.Context, request web.Categ
 	return helper.ToCategoryResponse(category)
 }
 
-func (service CategoryServiceImpl) Delete(ctx context.Context, categoryId int) {
+func (service *CategoryServiceImpl) Delete(ctx context.Context, categoryId int) {
 	tx, err := service.DB.Begin()
 	helper.PanicifError(err)
 	defer helper.CommitOrRollback(tx)
@@ -69,7 +70,7 @@ func (service CategoryServiceImpl) Delete(ctx context.Context, categoryId int) {
 	category = service.CategoryRepository.Update(ctx, tx, category)
 }
 
-func (service CategoryServiceImpl) FindById(ctx context.Context, categoryId int) web.CategoryResponse {
+func (service *CategoryServiceImpl) FindById(ctx context.Context, categoryId int) web.CategoryResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicifError(err)
 	defer helper.CommitOrRollback(tx)
@@ -80,7 +81,8 @@ func (service CategoryServiceImpl) FindById(ctx context.Context, categoryId int)
 	return helper.ToCategoryResponse(category)
 }
 
-func (service CategoryServiceImpl) FindAll(ctx context.Context) []web.CategoryResponse {
+func (service *CategoryServiceImpl) FindAll(ctx context.Context) []web.CategoryResponse {
+	fmt.Println("ini service")
 	tx, err := service.DB.Begin()
 	helper.PanicifError(err)
 	defer helper.CommitOrRollback(tx)
