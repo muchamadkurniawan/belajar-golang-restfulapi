@@ -11,8 +11,12 @@ import (
 type CategoryRepositoryImpl struct {
 }
 
+func NewCategoryRepository() *CategoryRepositoryImpl {
+	return &CategoryRepositoryImpl{}
+}
+
 func (repository *CategoryRepositoryImpl) Sava(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
-	sql := "insert into customer (id) values (?)"
+	sql := "insert into category (id) values (?)"
 	result, err := tx.ExecContext(ctx, sql, category.Name)
 	helper.PanicifError(err)
 
