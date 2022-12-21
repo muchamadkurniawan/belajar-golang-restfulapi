@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
 type CategoryRepositoryImpl struct {
@@ -28,27 +29,29 @@ func (repository *CategoryRepositoryImpl) Sava(ctx context.Context, tx *sql.Tx, 
 }
 
 func (repository *CategoryRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
-	sql := "update category set name = ? where id = ?"
-	_, err := tx.ExecContext(ctx, sql, category.Name, category.Id)
+	SQL := "update category set name = ? where id = ?"
+	_, err := tx.ExecContext(ctx, SQL, category.Name, category.Id)
 	helper.PanicifError(err)
 
 	return category
 }
 
 func (repository *CategoryRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, category domain.Category) {
-	sql := "delete from category where id = ?"
-	_, err := tx.ExecContext(ctx, sql, category.Id)
+	SQL := "delete from category where id = ?"
+	fmt.Println("ini delete repository")
+	_, err := tx.ExecContext(ctx, SQL, category.Id)
 	helper.PanicifError(err)
 }
 
-func (repository *CategoryRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, CategoryId int) (domain.Category, error) {
-	sql := "select id, name from category where id = ?"
-	rows, err := tx.QueryContext(ctx, sql, CategoryId)
+func (repository *CategoryRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, categoryId int) (domain.Category, error) {
+	SQL := "select id, name from category where id = ?"
+	rows, err := tx.QueryContext(ctx, SQL, categoryId)
 	helper.PanicifError(err)
-	category := domain.Category{}
+	defer rows.Close()
 
+	category := domain.Category{}
 	if rows.Next() {
-		err := rows.Scan(CategoryId, &category.Name)
+		err := rows.Scan(&category.Id, &category.Name)
 		helper.PanicifError(err)
 		return category, nil
 	} else {

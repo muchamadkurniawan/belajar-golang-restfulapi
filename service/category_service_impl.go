@@ -7,7 +7,6 @@ import (
 	"belajar-golang-restfulapi/repository"
 	"context"
 	"database/sql"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -67,7 +66,7 @@ func (service *CategoryServiceImpl) Delete(ctx context.Context, categoryId int) 
 	category, err := service.CategoryRepository.FindById(ctx, tx, categoryId)
 	helper.PanicifError(err)
 
-	category = service.CategoryRepository.Update(ctx, tx, category)
+	service.CategoryRepository.Delete(ctx, tx, category)
 }
 
 func (service *CategoryServiceImpl) FindById(ctx context.Context, categoryId int) web.CategoryResponse {
@@ -82,7 +81,6 @@ func (service *CategoryServiceImpl) FindById(ctx context.Context, categoryId int
 }
 
 func (service *CategoryServiceImpl) FindAll(ctx context.Context) []web.CategoryResponse {
-	fmt.Println("ini service")
 	tx, err := service.DB.Begin()
 	helper.PanicifError(err)
 	defer helper.CommitOrRollback(tx)
