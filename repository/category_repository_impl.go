@@ -6,7 +6,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 )
 
 type CategoryRepositoryImpl struct {
@@ -17,8 +16,8 @@ func NewCategoryRepository() CategoryRepository {
 }
 
 func (repository *CategoryRepositoryImpl) Sava(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
-	sql := "insert into category (id) values (?)"
-	result, err := tx.ExecContext(ctx, sql, category.Name)
+	SQL := "insert into category(name) values (?)"
+	result, err := tx.ExecContext(ctx, SQL, category.Name)
 	helper.PanicifError(err)
 
 	id, err := result.LastInsertId()
@@ -59,17 +58,17 @@ func (repository *CategoryRepositoryImpl) FindById(ctx context.Context, tx *sql.
 }
 
 func (repository *CategoryRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Category {
-	fmt.Println("ini repository ")
-	sql := "select id, name from category"
-	rows, err := tx.QueryContext(ctx, sql)
+	SQL := "select id, name from category"
+	rows, err := tx.QueryContext(ctx, SQL)
 	helper.PanicifError(err)
 	defer rows.Close()
 
 	var categories []domain.Category
 	for rows.Next() {
 		category := domain.Category{}
-		err := rows.Scan(category.Id, &category.Id)
-		helper.PanicifError(err)
+		err := rows.Scan(&category.Id, &category.Name)
+		print(err)
+		//helper.PanicIfError(err)
 		categories = append(categories, category)
 	}
 	return categories
